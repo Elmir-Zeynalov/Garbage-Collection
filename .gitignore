@@ -1,0 +1,8 @@
+.cproject
+.oppbuildspec
+.project
+.qtenvrc
+.settings/**
+GarabageCollectionSystem_dbg.exe
+out/**
+Makefile
