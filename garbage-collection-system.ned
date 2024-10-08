@@ -39,6 +39,10 @@ network GarbageCollectionSystem
 	@figure[from_anotherCan_to_others](type=text; pos=18,330; text="Connection from the anotherCan to others (time it takes) =");
 	@figure[from_others_to_anotherCan](type=text; pos=18,350; text="Connection from others to the anotherCan (time it takes) =");
 	
+	@figure[slow_from_cloud_to_others](type=text; pos=18,390; text="Slow connection from the Cloud to others (time it takes) =");	
+	@figure[slow_from_others_to_cloud](type=text; pos=18,410; text="Slow connection from others to the Cloud (time it takes) =");
+	@figure[fast_from_cloud_to_others](type=text; pos=18,430; text="Fast connection from the Cloud to others (time it takes) =");
+	@figure[fast_from_others_to_cloud](type=text; pos=18,450; text="Fast connection from others to the Cloud (time it takes) =");
 	
     @display("bgb=2000,600");
     submodules:
