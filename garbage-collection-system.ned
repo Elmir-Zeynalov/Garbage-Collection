@@ -39,7 +39,7 @@ network GarbageCollectionSystem
     @figure[vertical_street1](type=rectangle; pos=100,100; size=3,350; fillColor=black; fillOpacity=1);
     @figure[vertical_street2](type=rectangle; pos=200,200; size=3,150; fillColor=black; fillOpacity=1);
     
-    @figure[Title](type=text; pos=1500,30; text="Initial Title");
+    @figure[Title](type=text; pos=1500,5; text="Initial Title");
 
     
     //Calculations and statistics part

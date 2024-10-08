@@ -20,7 +20,7 @@ protected:
         cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
         sprintf(temp, "%s", configTitle);
         total_num_cloud->setText(temp);
-        total_num_cloud->setFont(cFigure::Font("Arial", 40, cFigure::FONT_BOLD));
+        total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
 
         EV << "Title updated to: " << configTitle << endl;
     }
