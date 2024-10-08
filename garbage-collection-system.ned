@@ -27,22 +27,24 @@ network GarbageCollectionSystem
     @figure[vertical_street1](type=rectangle; pos=100,100; size=3,350; fillColor=black; fillOpacity=1);
     @figure[vertical_street2](type=rectangle; pos=200,200; size=3,150; fillColor=black; fillOpacity=1);
     
-	@figure[slow_from_smartphone_to_others](type=text; pos=18,170; text="Slow connection from the smartphone to others (time it takes) =");
-	@figure[slow_others_to_smartphone](type=text; pos=18,190; text="Slow connection from tohers to the smartphone (time it takes) =");
-	@figure[fast_from_smartphone_to_others](type=text; pos=18,210; text="Fast connection from the smartphone to others (time it takes) =");
-	@figure[fast_others_to_smartphone](type=text; pos=18,230; text="Fast connection from tohers to the smartphone (time it takes) =");
+    @figure[Title](type=text; pos=1500,30; text="");
+    
+    //Calculations and statistics part
+	@figure[slow_from_smartphone_to_others](type=text; pos=1500,70; text="Slow connection from the smartphone to others (time it takes) =");
+	@figure[slow_others_to_smartphone](type=text; pos=1500,90; text="Slow connection from tohers to the smartphone (time it takes) =");
+	@figure[fast_from_smartphone_to_others](type=text; pos=1500,110; text="Fast connection from the smartphone to others (time it takes) =");
+	@figure[fast_others_to_smartphone](type=text; pos=1500,130; text="Fast connection from tohers to the smartphone (time it takes) =");
 	
+	@figure[from_can_to_others](type=text; pos=1500,170; text="Connection from the can to others (time it takes) =");
+	@figure[from_others_to_can](type=text; pos=1500,190; text="Connection from others to the can (time it takes) =");
 	
-	@figure[from_can_to_others](type=text; pos=18,270; text="Connection from the can to others (time it takes) =");
-	@figure[from_others_to_can](type=text; pos=18,290; text="Connection from others to the can (time it takes) =");
+	@figure[from_anotherCan_to_others](type=text; pos=1500,230; text="Connection from the anotherCan to others (time it takes) =");
+	@figure[from_others_to_anotherCan](type=text; pos=1500,250; text="Connection from others to the anotherCan (time it takes) =");
 	
-	@figure[from_anotherCan_to_others](type=text; pos=18,330; text="Connection from the anotherCan to others (time it takes) =");
-	@figure[from_others_to_anotherCan](type=text; pos=18,350; text="Connection from others to the anotherCan (time it takes) =");
-	
-	@figure[slow_from_cloud_to_others](type=text; pos=18,390; text="Slow connection from the Cloud to others (time it takes) =");	
-	@figure[slow_from_others_to_cloud](type=text; pos=18,410; text="Slow connection from others to the Cloud (time it takes) =");
-	@figure[fast_from_cloud_to_others](type=text; pos=18,430; text="Fast connection from the Cloud to others (time it takes) =");
-	@figure[fast_from_others_to_cloud](type=text; pos=18,450; text="Fast connection from others to the Cloud (time it takes) =");
+	@figure[slow_from_cloud_to_others](type=text; pos=1500,290; text="Slow connection from the Cloud to others (time it takes) =");	
+	@figure[slow_from_others_to_cloud](type=text; pos=1500,310; text="Slow connection from others to the Cloud (time it takes) =");
+	@figure[fast_from_cloud_to_others](type=text; pos=1500,330; text="Fast connection from the Cloud to others (time it takes) =");
+	@figure[fast_from_others_to_cloud](type=text; pos=1500,350; text="Fast connection from others to the Cloud (time it takes) =");
 	
     @display("bgb=2000,600");
     submodules:
