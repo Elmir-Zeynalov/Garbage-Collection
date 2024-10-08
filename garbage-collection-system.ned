@@ -17,7 +17,7 @@ simple CloudNode
         output out[3];
 }
 
-network FogNetwork
+network GarbageCollectionSystem
 {
     @figure[upper_street1](type=rectangle; pos=100,100; size=600,3; fillColor=black; fillOpacity=1);
     @figure[upper_street2](type=rectangle; pos=200,200; size=500,3; fillColor=black; fillOpacity=1);
