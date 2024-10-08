@@ -36,6 +36,8 @@ network GarbageCollectionSystem
 	@figure[from_can_to_others](type=text; pos=18,270; text="Connection from the can to others (time it takes) =");
 	@figure[from_others_to_can](type=text; pos=18,290; text="Connection from others to the can (time it takes) =");
 	
+	@figure[from_anotherCan_to_others](type=text; pos=18,330; text="Connection from the anotherCan to others (time it takes) =");
+	@figure[from_others_to_anotherCan](type=text; pos=18,350; text="Connection from others to the anotherCan (time it takes) =");
 	
 	
     @display("bgb=2000,600");
