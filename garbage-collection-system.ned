@@ -29,9 +29,13 @@ network GarbageCollectionSystem
     
 	@figure[slow_from_smartphone_to_others](type=text; pos=18,170; text="Slow connection from the smartphone to others (time it takes) =");
 	@figure[slow_others_to_smartphone](type=text; pos=18,190; text="Slow connection from tohers to the smartphone (time it takes) =");
-	
 	@figure[fast_from_smartphone_to_others](type=text; pos=18,210; text="Fast connection from the smartphone to others (time it takes) =");
 	@figure[fast_others_to_smartphone](type=text; pos=18,230; text="Fast connection from tohers to the smartphone (time it takes) =");
+	
+	
+	@figure[from_can_to_others](type=text; pos=18,270; text="Connection from the can to others (time it takes) =");
+	@figure[from_others_to_can](type=text; pos=18,290; text="Connection from others to the can (time it takes) =");
+	
 	
 	
     @display("bgb=2000,600");
