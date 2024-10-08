@@ -5,30 +5,6 @@
 
 using namespace omnetpp;
 
-
-class CanvasManager : public cSimpleModule
-{
-protected:
-    virtual void initialize() override {
-        // Retrieve the configTitle parameter from the ini file
-        const char* configTitle = par("configTitle").stringValue();
-        EV << "Setting configTitle to: " << configTitle << endl;
-
-        cCanvas* canvas = this->getParentModule()->getCanvas();
-        char temp[100];
-
-        cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
-        sprintf(temp, "%s", configTitle);
-        total_num_cloud->setText(temp);
-        total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
-
-        EV << "Title updated to: " << configTitle << endl;
-    }
-};
-
-Define_Module(CanvasManager);
-
-
 class ComputerNode : public cSimpleModule
 {
   private:
@@ -55,6 +31,19 @@ ComputerNode::~ComputerNode()
 
 void ComputerNode::initialize()
 {
+    // Retrieve the configTitle parameter from the ini file
+    // UPDATING TITLE
+    const char* configTitle = par("configTitle").stringValue();
+    EV << "Setting configTitle to: " << configTitle << endl;
+    cCanvas* canvas = this->getParentModule()->getCanvas();
+    char temp[100];
+    cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
+    sprintf(temp, "%s", configTitle);
+    total_num_cloud->setText(temp);
+    total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
+    EV << "Title updated to: " << configTitle << endl;
+    //
+
     timeout = 1.0;
     timeoutEvent = new cMessage("timeoutEvent");
 
@@ -153,6 +142,3 @@ void CloudNode::acknowledgeFromCloudToComputer()
     cMessage *copy = (cMessage *)ackMsg->dup();
     send(copy, "out");
 }
-
-
-
