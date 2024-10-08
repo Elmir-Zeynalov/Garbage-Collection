@@ -26,7 +26,14 @@ network GarbageCollectionSystem
 
     @figure[vertical_street1](type=rectangle; pos=100,100; size=3,350; fillColor=black; fillOpacity=1);
     @figure[vertical_street2](type=rectangle; pos=200,200; size=3,150; fillColor=black; fillOpacity=1);
-
+    
+	@figure[slow_from_smartphone_to_others](type=text; pos=18,170; text="Slow connection from the smartphone to others (time it takes) =");
+	@figure[slow_others_to_smartphone](type=text; pos=18,190; text="Slow connection from tohers to the smartphone (time it takes) =");
+	
+	@figure[fast_from_smartphone_to_others](type=text; pos=18,210; text="Fast connection from the smartphone to others (time it takes) =");
+	@figure[fast_others_to_smartphone](type=text; pos=18,230; text="Fast connection from tohers to the smartphone (time it takes) =");
+	
+	
     @display("bgb=2000,600");
     submodules:
         can: ComputerNode {
