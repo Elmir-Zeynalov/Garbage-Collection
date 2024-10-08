@@ -17,8 +17,20 @@ simple CloudNode
         output out[3];
 }
 
+simple CanvasManager
+{
+    parameters:
+        string configTitle;
+    gates:
+        // No gates required for this simple module
+}
+
+
 network GarbageCollectionSystem
 {
+    parameters:
+        string configTitle;
+  
     @figure[upper_street1](type=rectangle; pos=100,100; size=600,3; fillColor=black; fillOpacity=1);
     @figure[upper_street2](type=rectangle; pos=200,200; size=500,3; fillColor=black; fillOpacity=1);
     @figure[lower_street1](type=rectangle; pos=200,350; size=500,3; fillColor=black; fillOpacity=1);
@@ -27,7 +39,8 @@ network GarbageCollectionSystem
     @figure[vertical_street1](type=rectangle; pos=100,100; size=3,350; fillColor=black; fillOpacity=1);
     @figure[vertical_street2](type=rectangle; pos=200,200; size=3,150; fillColor=black; fillOpacity=1);
     
-    @figure[Title](type=text; pos=1500,30; text="");
+    @figure[Title](type=text; pos=1500,30; text="Initial Title");
+
     
     //Calculations and statistics part
 	@figure[slow_from_smartphone_to_others](type=text; pos=1500,70; text="Slow connection from the smartphone to others (time it takes) =");
@@ -47,7 +60,12 @@ network GarbageCollectionSystem
 	@figure[fast_from_others_to_cloud](type=text; pos=1500,350; text="Fast connection from others to the Cloud (time it takes) =");
 	
     @display("bgb=2000,600");
+
     submodules:
+        canvasManager: CanvasManager {
+            @display("p=100,100");  // The submodule will handle updating the title
+        }
+        
         can: ComputerNode {
             @display("p=210,70;i=block/bucket;r=100");
         }
@@ -67,6 +85,8 @@ network GarbageCollectionSystem
         anotherCan.in <-- {  delay = 100ms; } <-- cloudNode.out[1];
         host.out --> {  delay = 100ms; } --> cloudNode.in[2];
         host.in <-- {  delay = 100ms; } <-- cloudNode.out[2];
+   
+   
 
 }
 

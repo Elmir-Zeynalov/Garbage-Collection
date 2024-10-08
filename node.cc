@@ -5,6 +5,40 @@
 
 using namespace omnetpp;
 
+
+class CanvasManager : public cSimpleModule
+{
+protected:
+    virtual void initialize() override {
+        // Retrieve the configTitle parameter from the ini file
+        const char* configTitle = par("configTitle").stringValue();
+        EV << "Setting configTitle to: " << configTitle << endl;
+
+        // Access the canvas and its rootFigure
+        //cCanvas* canvas = getCanvas();
+        //cGroupFigure* rootFigure = check_and_cast<cGroupFigure *>(canvas->getRootFigure());
+
+        //cCanvas* canvas = this->getParentModule()->getCanvas();
+
+        //cTextFigure* titleFigure  = (cTextFigure*)(canvas->getFigure("total_num_cloud"));
+
+        // Access the "Title" figure, check if it exists
+        //cTextFigure* titleFigure = check_and_cast_nullable<cTextFigure *>(rootFigure->getFigure("Title"));
+
+        cCanvas* canvas = this->getParentModule()->getCanvas();
+        char temp[100];
+
+        cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
+        sprintf(temp, "%s", configTitle);
+        total_num_cloud->setText(temp);
+
+        EV << "Title updated to: " << configTitle << endl;
+    }
+};
+
+Define_Module(CanvasManager);
+
+
 class ComputerNode : public cSimpleModule
 {
   private:
@@ -129,4 +163,6 @@ void CloudNode::acknowledgeFromCloudToComputer()
     cMessage *copy = (cMessage *)ackMsg->dup();
     send(copy, "out");
 }
+
+
 
