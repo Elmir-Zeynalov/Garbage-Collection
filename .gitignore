@@ -6,3 +6,4 @@
 GarabageCollectionSystem_dbg.exe
 out/**
 Makefile
+results/*

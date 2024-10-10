@@ -1,12 +1,28 @@
 
-simple ComputerNode
+simple GarbageTruck
 {
     parameters:
         @display("i=device/pc");
         string configTitle; //NEEDED TO UPDATE TITLE. A LITTLE HACKY ATM BUT WORKS FOR NOW
     gates:
-        input in;
-        output out;
+        input cloudIn;
+        input canIn;
+        input can2In;
+        output cloudOut;
+        output canOut;
+        output can2Out;
+}
+
+simple TrashCan
+{
+    parameters:
+        @display("i=device/pc");
+        string configTitle; //NEEDED TO UPDATE TITLE. A LITTLE HACKY ATM BUT WORKS FOR NOW
+    gates:
+        input cloudIn;
+        input truckIn;
+        output cloudOut;
+        output truckOut;
 }
 
 simple CloudNode
@@ -14,8 +30,12 @@ simple CloudNode
     parameters:
         @display("i=device/server");
     gates:
-        input in[3];
-        output out[3];
+        input truckIn;
+        input canIn;
+        input can2In;
+        output truckOut;
+        output canOut;
+        output can2Out;
 }
 
 
@@ -56,42 +76,30 @@ network GarbageCollectionSystem
         @display("bgb=2000,600");
 
     submodules:
-        can: ComputerNode {
+        can: TrashCan {
             @display("p=210,70;i=block/bucket;r=100");
         }
-        anotherCan: ComputerNode {
+        anotherCan: TrashCan {
             @display("p=270,320;i=block/bucket;r=100");
         }
-        host: ComputerNode {
+        host: GarbageTruck {
             @display("p=610,135;i=block/wheelbarrow;r=70");
         }
         cloudNode: CloudNode {
             @display("p=837,275;i=block/table;r=380");
         }
     connections:
-        can.out --> {  delay = 100ms; } --> cloudNode.in[0];
-        can.in <-- {  delay = 100ms; } <-- cloudNode.out[0];
-        anotherCan.out --> {  delay = 100ms; } --> cloudNode.in[1];
-        anotherCan.in <-- {  delay = 100ms; } <-- cloudNode.out[1];
-        host.out --> {  delay = 100ms; } --> cloudNode.in[2];
-        host.in <-- {  delay = 100ms; } <-- cloudNode.out[2];
-
-
-
-}
-
-network CloudNetwork
-{
-    @display("bgb=550");
-    submodules:
-        computerNode: ComputerNode {
-            @display("p=63,79");
-        }
-        cloudNode: CloudNode {
-            @display("p=480,79");
-        }
-    connections:
-        computerNode.out --> {  delay = 100ms; } --> cloudNode.in[0];
-        computerNode.in <-- {  delay = 100ms; } <-- cloudNode.out[0];
+        can.truckOut --> {  delay = 100ms; } --> host.canIn;
+        can.cloudOut --> {  delay = 100ms; } --> cloudNode.canIn;
+        can.truckIn <-- {  delay = 100ms; } <-- host.canOut;
+        can.cloudIn <-- {  delay = 100ms; } <-- cloudNode.canOut;
+        
+        anotherCan.truckOut --> {  delay = 100ms; } --> host.can2In;
+        anotherCan.cloudOut --> {  delay = 100ms; } --> cloudNode.can2In;
+        anotherCan.truckIn <-- {  delay = 100ms; } <-- host.can2Out;
+        anotherCan.cloudIn <-- {  delay = 100ms; } <-- cloudNode.can2Out;
+        
+        host.cloudOut --> {  delay = 100ms; } --> cloudNode.truckIn; 
+        host.cloudIn <-- {  delay = 100ms; } <-- cloudNode.truckOut;
 }
 
