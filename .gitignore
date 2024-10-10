@@ -2,7 +2,7 @@
 .oppbuildspec
 .project
 .qtenvrc
-.settings/**
+.settings/*
 GarabageCollectionSystem_dbg.exe
 out/**
 Makefile
