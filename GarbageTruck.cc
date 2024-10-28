@@ -12,6 +12,7 @@ class GarbageTruck : public cSimpleModule
     cMessage *timeoutEvent = nullptr;  // holds pointer to the timeout self-message
     cMessage *message = nullptr;  // message that has to be re-sent on timeout
     std::string currentOut;
+    const char* config;
 
   public:
     virtual ~GarbageTruck();
@@ -20,6 +21,9 @@ class GarbageTruck : public cSimpleModule
     virtual void sendCopyOf(cMessage *msg, std::string out);
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
+    virtual void handleFogBasedSolution(cMessage *msg);
+    virtual void handleCloudBasedSolution(cMessage *msg);
+    virtual void handleNoGarbageSolution(cMessage *msg);
 };
 
 Define_Module(GarbageTruck);
@@ -32,10 +36,10 @@ GarbageTruck::~GarbageTruck()
 
 void GarbageTruck::initialize()
 {
-
     // Retrieve the configTitle parameter from the ini file
     // UPDATING TITLE
     const char* configTitle = par("configTitle").stringValue();
+    config = configTitle;
     EV << "Setting configTitle to: " << configTitle << endl;
     cCanvas* canvas = this->getParentModule()->getCanvas();
     char temp[100];
@@ -49,11 +53,13 @@ void GarbageTruck::initialize()
     timeout = 1.0;
     timeoutEvent = new cMessage("timeoutEvent");
 
+    //This part is the same for all the configs - all start with sending "Is the can full?" to can 1.
     EV << "Sending msg to can 1\n";
     message = new cMessage("1-Is the can full?");
     currentOut = "canOut";
     sendCopyOf(message, currentOut);
     scheduleAt(simTime()+timeout, timeoutEvent);
+
 }
 
 void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
@@ -65,6 +71,7 @@ void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
 
 void GarbageTruck::handleMessage(cMessage *msg)
 {
+    //On timeouts we always behave in the same manner
     if (msg == timeoutEvent)
     {
         // If we receive the timeout event, that means the packet hasn't
@@ -75,29 +82,58 @@ void GarbageTruck::handleMessage(cMessage *msg)
     }
     else
     {
-        // message arrived
-        // Acknowledgment received!
-        EV << "Received: " << msg->getName() << "\n";
-        EV << "Timer cancelled.\n";
-        cancelEvent(timeoutEvent);
+        //Behaviour changes depending on the config
+        if(strcmp(config, "Fog-based solution with fast messages") == 0){
+            handleFogBasedSolution(msg);
+        }
+        else if(strcmp(config, "Cloud-based solution with slow messages") == 0){
+            handleCloudBasedSolution(msg);
 
-        if (strcmp("3 – YES", msg->getName()) == 0)
-        {
-            // can 1 is full, needs to be cleaned
-            sendCopyOf(new cMessage("7-Collect garbage"), "cloudOut");
+        }else if(strcmp(config, "No garbage solution") == 0){
+            handleNoGarbageSolution(msg);
         }
-        else if (strcmp("6 - YES", msg->getName()) == 0)
-        {
-            // can 2 is full, needs to be cleaned
-            sendCopyOf(new cMessage("9-Collect garbage"), "cloudOut");
+        else{
+            //We shouldnt be here. This is an erroneous state
+            EV << "Unknown configuration, no specific handling\n";
         }
-        else if (strcmp("8 - OK", msg->getName()) == 0)
-        {
-            message = new cMessage("4-Is the can full?");
-            currentOut = "can2Out";
-            sendCopyOf(message, currentOut);
-            scheduleAt(simTime()+timeout, timeoutEvent);
-        }
+
     }
 }
+
+void GarbageTruck::handleFogBasedSolution(cMessage *msg){
+
+}
+
+void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
+    // message arrived
+    // Acknowledgment received!
+    EV << "Received: " << msg->getName() << "\n";
+    EV << "Timer cancelled.\n";
+    cancelEvent(timeoutEvent);
+
+    if (strcmp("3 – YES", msg->getName()) == 0)
+    {
+        // can 1 is full, needs to be cleaned
+        sendCopyOf(new cMessage("7-Collect garbage"), "cloudOut");
+    }
+    else if (strcmp("6 - YES", msg->getName()) == 0)
+    {
+        EV << "WE GOT 6????: " << msg->getName() << "\n";
+        // can 2 is full, needs to be cleaned
+        sendCopyOf(new cMessage("9-Collect garbage"), "cloudOut");
+    }else if (strcmp("8 - OK", msg->getName()) == 0)
+    {
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+    }
+}
+
+void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
+
+}
+
+
+
 

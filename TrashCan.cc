@@ -9,6 +9,7 @@ class TrashCan : public cSimpleModule
 {
   private:
     int numLostMsgs = 0;
+    const char* config;
 
   public:
     virtual ~TrashCan();
@@ -26,6 +27,9 @@ TrashCan::~TrashCan()
 
 void TrashCan::initialize()
 {
+    // Retrieve the configTitle parameter from the ini file
+    const char* configTitle = par("configTitle").stringValue();
+    config = configTitle;
     /*
     // Retrieve the configTitle parameter from the ini file
     // UPDATING TITLE
@@ -55,7 +59,19 @@ void TrashCan::handleMessage(cMessage *msg)
         numLostMsgs++;
         if (numLostMsgs > 3) {
             // it is time to acknowledge the truck
-            send(new cMessage("3 – YES"), "truckOut");
+
+            if(strcmp(config, "No garbage solution") == 0){
+                send(new cMessage("2 – NO"), "truckOut");
+            }else{
+                //always send 3 - YES
+                send(new cMessage("3 – YES"), "truckOut");
+
+                //only in the FOG solution do we send an answer to the cloud
+                if(strcmp(config, "Fog-based solution with fast messages") == 0){
+                    send(new cMessage("7 – Collect can garbage"), "cloudOut");
+                }
+            }
+
         } else {
             EV << "\"Losing\" message.\n";
             bubble("message lost");
@@ -66,7 +82,17 @@ void TrashCan::handleMessage(cMessage *msg)
         numLostMsgs++;
         if (numLostMsgs > 3) {
             // it is time to acknowledge the truck
-            send(new cMessage("6 - YES"), "truckOut");
+            if(strcmp(config, "No garbage solution") == 0){
+                send(new cMessage("2 – NO"), "truckOut");
+            }else{
+                //always send 3 - YES
+                send(new cMessage("6 - YES"), "truckOut");
+                //only in the FOG solution do we send an answer to the cloud
+                if(strcmp(config, "Fog-based solution with fast messages") == 0){
+                    send(new cMessage("9 – Collect can garbage"), "cloudOut");
+                }
+            }
+
         } else {
             EV << "\"Losing\" message.\n";
             bubble("message lost");
@@ -75,3 +101,6 @@ void TrashCan::handleMessage(cMessage *msg)
 
     delete msg;
 }
+
+
+

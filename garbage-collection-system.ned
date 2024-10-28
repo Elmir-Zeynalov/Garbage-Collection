@@ -29,6 +29,7 @@ simple CloudNode
 {
     parameters:
         @display("i=device/server");
+        string configTitle;
     gates:
         input truckIn;
         input canIn;
@@ -86,20 +87,20 @@ network GarbageCollectionSystem
             @display("p=610,135;i=block/wheelbarrow;r=70");
         }
         cloudNode: CloudNode {
-            @display("p=837,275;i=block/table;r=380");
+            @display("p=837,275;i=block/table;r=650");
         }
     connections:
         can.truckOut --> {  delay = 100ms; } --> host.canIn;
         can.cloudOut --> {  delay = 100ms; } --> cloudNode.canIn;
         can.truckIn <-- {  delay = 100ms; } <-- host.canOut;
         can.cloudIn <-- {  delay = 100ms; } <-- cloudNode.canOut;
-        
+
         anotherCan.truckOut --> {  delay = 100ms; } --> host.can2In;
         anotherCan.cloudOut --> {  delay = 100ms; } --> cloudNode.can2In;
         anotherCan.truckIn <-- {  delay = 100ms; } <-- host.can2Out;
         anotherCan.cloudIn <-- {  delay = 100ms; } <-- cloudNode.can2Out;
-        
-        host.cloudOut --> {  delay = 100ms; } --> cloudNode.truckIn; 
+
+        host.cloudOut --> {  delay = 100ms; } --> cloudNode.truckIn;
         host.cloudIn <-- {  delay = 100ms; } <-- cloudNode.truckOut;
 }
 
