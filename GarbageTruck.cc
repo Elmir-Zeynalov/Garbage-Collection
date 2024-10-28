@@ -152,6 +152,22 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
 }
 
 void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
+    // message arrived
+    // Acknowledgment received!
+    EV << "Received: " << msg->getName() << "\n";
+    EV << "Timer cancelled.\n";
+    cancelEvent(timeoutEvent);
+
+    if (strcmp("2 – NO", msg->getName()) == 0)
+    {
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+    }else if (strcmp("5 – NO", msg->getName()) == 0)
+    {
+        EV << "No garbage to collect:  " << msg->getName() << "\n";
+    }
 
 }
 

@@ -83,7 +83,7 @@ void TrashCan::handleMessage(cMessage *msg)
         if (numLostMsgs > 3) {
             // it is time to acknowledge the truck
             if(strcmp(config, "No garbage solution") == 0){
-                send(new cMessage("2 – NO"), "truckOut");
+                send(new cMessage("5 – NO"), "truckOut");
             }else{
                 //always send 3 - YES
                 send(new cMessage("6 - YES"), "truckOut");
