@@ -101,7 +101,28 @@ void GarbageTruck::handleMessage(cMessage *msg)
 }
 
 void GarbageTruck::handleFogBasedSolution(cMessage *msg){
+    // message arrived
+       // Acknowledgment received!
+       EV << "Received: " << msg->getName() << "\n";
+       EV << "Timer cancelled.\n";
+       cancelEvent(timeoutEvent);
 
+       if (strcmp("3 – YES", msg->getName()) == 0)
+       {
+           message = new cMessage("4-Is the can full?");
+           currentOut = "can2Out";
+           sendCopyOf(message, currentOut);
+           scheduleAt(simTime()+timeout, timeoutEvent);
+       }
+
+       else if (strcmp("6 - YES", msg->getName()) == 0)
+       {
+           EV << "WE GOT 6????: " << msg->getName() << "\n";
+           // can 2 is full, needs to be cleaned
+
+       }else {
+           EV << "FOG:TRUCK -> " << msg->getName() << "\n";
+       }
 }
 
 void GarbageTruck::handleCloudBasedSolution(cMessage *msg){

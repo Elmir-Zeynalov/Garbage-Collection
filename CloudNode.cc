@@ -64,7 +64,14 @@ void CloudNode::acknowledge(cMessage* message, std::string outpoint)
 
 
 void CloudNode::handleFogBasedSolution(cMessage *msg){
-
+    if (strcmp("7 – Collect can garbage", msg->getName()) == 0)
+    {
+        acknowledge(new cMessage("8 - OK"), "canOut");
+    }
+    else if (strcmp("9 – Collect can garbage", msg->getName()) == 0)
+    {
+        acknowledge(new cMessage("10 - OK"), "can2Out");
+    }
 }
 
 void CloudNode::handleCloudBasedSolution(cMessage *msg){
