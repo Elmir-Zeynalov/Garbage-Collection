@@ -13,6 +13,8 @@ class GarbageTruck : public cSimpleModule
     cMessage *message = nullptr;  // message that has to be re-sent on timeout
     std::string currentOut;
     const char* config;
+    char buf[150];
+    int sentHostFast=0 , rcvdHostFast=0, sentHostSlow=0, rcvdHostSlow=0;
 
   public:
     virtual ~GarbageTruck();
@@ -24,6 +26,7 @@ class GarbageTruck : public cSimpleModule
     virtual void handleFogBasedSolution(cMessage *msg);
     virtual void handleCloudBasedSolution(cMessage *msg);
     virtual void handleNoGarbageSolution(cMessage *msg);
+    virtual void updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow);
 };
 
 Define_Module(GarbageTruck);
@@ -36,6 +39,8 @@ GarbageTruck::~GarbageTruck()
 
 void GarbageTruck::initialize()
 {
+    updateMessageStats(0, 0, 0, 0);
+
     // Retrieve the configTitle parameter from the ini file
     // UPDATING TITLE
     const char* configTitle = par("configTitle").stringValue();
@@ -58,8 +63,11 @@ void GarbageTruck::initialize()
     message = new cMessage("1-Is the can full?");
     currentOut = "canOut";
     sendCopyOf(message, currentOut);
+    sentHostFast++;
+
     scheduleAt(simTime()+timeout, timeoutEvent);
 
+    //updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
 }
 
 void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
@@ -79,6 +87,7 @@ void GarbageTruck::handleMessage(cMessage *msg)
         EV << "Timeout expired, resending message and restarting timer\n";
         sendCopyOf(message, currentOut);
         scheduleAt(simTime()+timeout, timeoutEvent);
+        sentHostFast++;
     }
     else
     {
@@ -98,6 +107,9 @@ void GarbageTruck::handleMessage(cMessage *msg)
         }
 
     }
+
+    // refresh statistics
+    updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
 }
 
 void GarbageTruck::handleFogBasedSolution(cMessage *msg){
@@ -112,6 +124,8 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
            message = new cMessage("4-Is the can full?");
            currentOut = "can2Out";
            sendCopyOf(message, currentOut);
+           rcvdHostFast++;
+           sentHostFast++;
            scheduleAt(simTime()+timeout, timeoutEvent);
        }
 
@@ -119,6 +133,7 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
        {
            EV << "WE GOT 6????: " << msg->getName() << "\n";
            // can 2 is full, needs to be cleaned
+           rcvdHostFast++;
 
        }else {
            EV << "FOG:TRUCK -> " << msg->getName() << "\n";
@@ -169,6 +184,12 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
         EV << "No garbage to collect:  " << msg->getName() << "\n";
     }
 
+}
+
+
+void GarbageTruck::updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow){
+    sprintf(buf, "sentHostFast: %d  rcvdHostFast: %d sentHostSlow: %d rcvdHostSlow: %d", sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
+    getDisplayString().setTagArg("t", 0, buf);
 }
 
 
