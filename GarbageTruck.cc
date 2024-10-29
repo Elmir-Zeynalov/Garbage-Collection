@@ -67,7 +67,7 @@ void GarbageTruck::initialize()
 
     scheduleAt(simTime()+timeout, timeoutEvent);
 
-    //updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
+    updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
 }
 
 void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
@@ -151,20 +151,29 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
 
     if (strcmp("3 – YES", msg->getName()) == 0)
     {
+        rcvdHostFast++;
         // can 1 is full, needs to be cleaned
         sendCopyOf(new cMessage("7-Collect garbage"), "cloudOut");
+        sentHostSlow++;
     }
     else if (strcmp("6 - YES", msg->getName()) == 0)
     {
+        rcvdHostFast++;
         EV << "WE GOT 6????: " << msg->getName() << "\n";
         // can 2 is full, needs to be cleaned
         sendCopyOf(new cMessage("9-Collect garbage"), "cloudOut");
+        sentHostSlow++;
     }else if (strcmp("8 - OK", msg->getName()) == 0)
     {
         message = new cMessage("4-Is the can full?");
         currentOut = "can2Out";
         sendCopyOf(message, currentOut);
         scheduleAt(simTime()+timeout, timeoutEvent);
+        rcvdHostSlow++;
+    }
+    else if (strcmp("10 - OK", msg->getName()) == 0)
+    {
+        rcvdHostSlow++;
     }
 }
 
@@ -177,15 +186,17 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
     if (strcmp("2 – NO", msg->getName()) == 0)
     {
+        rcvdHostFast++;
         message = new cMessage("4-Is the can full?");
         currentOut = "can2Out";
         sendCopyOf(message, currentOut);
         scheduleAt(simTime()+timeout, timeoutEvent);
-    }else if (strcmp("5 – NO", msg->getName()) == 0)
+    }
+    else if (strcmp("5 – NO", msg->getName()) == 0)
     {
+        rcvdHostFast++;
         EV << "No garbage to collect:  " << msg->getName() << "\n";
     }
-
 }
 
 

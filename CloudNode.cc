@@ -8,7 +8,9 @@ using namespace omnetpp;
 class CloudNode : public cSimpleModule
 {
     private:
+        char buf[150];
         const char* config;
+        int sentCloudFast=0 , rcvdCloudFast=0, sentCloudSlow=0, rcvdCloudSlow=0;
 
   protected:
     virtual void handleMessage(cMessage *msg) override;
@@ -17,6 +19,7 @@ class CloudNode : public cSimpleModule
     virtual void handleFogBasedSolution(cMessage *msg);
     virtual void handleCloudBasedSolution(cMessage *msg);
     virtual void handleNoGarbageSolution(cMessage *msg);
+    virtual void updateMessageStats(int sentCloudFast, int rcvdCloudFast, int sentCloudSlow, int rcvdCloudSlow);
   public:
       virtual ~CloudNode();
 };
@@ -32,10 +35,10 @@ void CloudNode::initialize()
     // Retrieve the configTitle parameter from the ini file
     const char* configTitle = par("configTitle").stringValue();
     config = configTitle;
+    if(strcmp(config, "No garbage solution") != 0) {
+        updateMessageStats(sentCloudFast, rcvdCloudFast, sentCloudSlow, rcvdCloudSlow);
+    }
 }
-
-
-
 
 void CloudNode::handleMessage(cMessage *msg)
 {
@@ -55,6 +58,7 @@ void CloudNode::handleMessage(cMessage *msg)
         EV << "Unknown configuration, no specific handling\n";
     }
     delete msg;
+    updateMessageStats(sentCloudFast, rcvdCloudFast, sentCloudSlow, rcvdCloudSlow);
 }
 
 void CloudNode::acknowledge(cMessage* message, std::string outpoint)
@@ -64,24 +68,30 @@ void CloudNode::acknowledge(cMessage* message, std::string outpoint)
 
 
 void CloudNode::handleFogBasedSolution(cMessage *msg){
+    rcvdCloudFast++;
     if (strcmp("7 – Collect can garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("8 - OK"), "canOut");
+        sentCloudFast++;
     }
     else if (strcmp("9 – Collect can garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("10 - OK"), "can2Out");
+        sentCloudFast++;
     }
 }
 
 void CloudNode::handleCloudBasedSolution(cMessage *msg){
+    rcvdCloudSlow++;
     if (strcmp("7-Collect garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("8 - OK"), "truckOut");
+        sentCloudSlow++;
     }
     else if (strcmp("9-Collect garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("10 - OK"), "truckOut");
+        sentCloudSlow++;
     }
 }
 
@@ -89,5 +99,9 @@ void CloudNode::handleNoGarbageSolution(cMessage *msg){
 
 }
 
+void CloudNode::updateMessageStats(int sentCloudFast, int rcvdCloudFast, int sentCloudSlow, int rcvdCloudSlow){
+    sprintf(buf, "sentCloudFast: %d  rcvdCloudFast: %d sentCloudSlow: %d rcvdCloudSlow: %d", sentCloudFast, rcvdCloudFast, sentCloudSlow, rcvdCloudSlow);
+    getDisplayString().setTagArg("t", 0, buf);
+}
 
 
