@@ -33,26 +33,7 @@ void TrashCan::initialize()
     // Retrieve the configTitle parameter from the ini file
     const char* configTitle = par("configTitle").stringValue();
     config = configTitle;
-    /*
-    // Retrieve the configTitle parameter from the ini file
-    // UPDATING TITLE
-    const char* configTitle = par("configTitle").stringValue();
-    EV << "Setting configTitle to: " << configTitle << endl;
-    cCanvas* canvas = this->getParentModule()->getCanvas();
-    char temp[100];
-    cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
-    sprintf(temp, "%s", configTitle);
-    total_num_cloud->setText(temp);
-    total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
-    EV << "Title updated to: " << configTitle << endl;
-    //
-
-    timeout = 1.0;
-    timeoutEvent = new cMessage("timeoutEvent");
-
-    EV << "Sending initial hello message\n";
-    message = new cMessage("1-Hello");
-    sendCopyOf(message);*/
+    //Update the message stats on init
     updateMessageStats(0,0,0);
 }
 
