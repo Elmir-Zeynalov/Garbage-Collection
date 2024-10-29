@@ -79,6 +79,7 @@ void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
 
 void GarbageTruck::handleMessage(cMessage *msg)
 {
+    updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
     //On timeouts we always behave in the same manner
     if (msg == timeoutEvent)
     {
@@ -110,6 +111,7 @@ void GarbageTruck::handleMessage(cMessage *msg)
 
     // refresh statistics
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
+
 }
 
 void GarbageTruck::handleFogBasedSolution(cMessage *msg){
