@@ -129,7 +129,7 @@ network GarbageCollectionSystem
         host: MobileHost {
             parameters:
                 configTitle = parent.configTitle;
-            @display("p=610,135;i=block/wheelbarrow;r=70");
+            @display("p=910,900;i=block/wheelbarrow;r=70");
         }
         cloudNode: CloudNode {
             @display("p=1080,440;i=block/table;r=650");
