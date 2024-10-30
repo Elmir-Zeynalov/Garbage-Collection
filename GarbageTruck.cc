@@ -28,7 +28,7 @@ class GarbageTruck : public cSimpleModule
     virtual void handleCloudBasedSolution(cMessage *msg);
     virtual void handleNoGarbageSolution(cMessage *msg);
     virtual void updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow);
-    virtual void sendDelayedMessage(const char* messageName, const std::string& outChannel);
+    virtual void sendDelayedMessage();
 };
 
 Define_Module(GarbageTruck);
@@ -86,14 +86,20 @@ void GarbageTruck::handleMessage(cMessage *msg)
         switch(msg-> getKind()){
         case 1:
             //First delay
-            sendDelayedMessage("1-Is the can full?", "canOut");
+            message = new cMessage("1-Is the can full?");
+            currentOut = "canOut";
+            sendCopyOf(message, currentOut);
+            sentHostFast++;
+            scheduleAt(simTime() + timeout, timeoutEvent);
 
             delete msg;  // Clean up the initialMessage after use
             break;
 
         case 2:
             //Second delay
-            sendDelayedMessage("4-Is the can full?", "can2Out");
+
+            sendDelayedMessage();
+
             break;
 
         default:
@@ -146,7 +152,6 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
            scheduleAt(simTime() + timeout + 7, delay);
            rcvdHostFast++;
        }
-
        else if (strcmp("6 - YES", msg->getName()) == 0)
        {
            EV << "WE GOT 6 YES" << msg->getName() << "\n";
@@ -179,10 +184,9 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
         sentHostSlow++;
     }else if (strcmp("8 - OK", msg->getName()) == 0)
     {
-        message = new cMessage("4-Is the can full?");
-        currentOut = "can2Out";
-        sendCopyOf(message, currentOut);
-        scheduleAt(simTime()+timeout, timeoutEvent);
+        delay = new cMessage("SecondDelay");
+        delay->setKind(2);
+        scheduleAt(simTime() + timeout + 7, delay);
         rcvdHostSlow++;
     }
     else if (strcmp("10 - OK", msg->getName()) == 0)
@@ -201,10 +205,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
     if (strcmp("2 – NO", msg->getName()) == 0)
     {
         rcvdHostFast++;
-        message = new cMessage("4-Is the can full?");
-        currentOut = "can2Out";
-        sendCopyOf(message, currentOut);
-        scheduleAt(simTime()+timeout, timeoutEvent);
+        delay = new cMessage("SecondDelay");
+        delay->setKind(2);
+        scheduleAt(simTime() + timeout + 7, delay);
     }
     else if (strcmp("5 – NO", msg->getName()) == 0)
     {
@@ -216,17 +219,31 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
 void GarbageTruck::updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow){
     cModule *parent = getParentModule();
-
     sprintf(buf, "sentHostFast: %d  rcvdHostFast: %d sentHostSlow: %d rcvdHostSlow: %d", sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
     parent->getDisplayString().setTagArg("t", 0, buf);
 }
 
-void GarbageTruck::sendDelayedMessage(const char* messageName, const std::string& outChannel){
-    message = new cMessage(messageName);
-    currentOut = outChannel;
-    sendCopyOf(message, currentOut);
-    sentHostFast++;
-    scheduleAt(simTime() + timeout, timeoutEvent);
+void GarbageTruck::sendDelayedMessage(){
+    if(strcmp(config, "Fog-based solution with fast messages") == 0){
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime() + timeout, timeoutEvent);
+        sentHostFast++;
+    }
+    else if(strcmp(config, "Cloud-based solution with slow messages") == 0){
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+        sentHostFast++;
+    } else {
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+        sentHostFast++;
+    }
 }
 
 
