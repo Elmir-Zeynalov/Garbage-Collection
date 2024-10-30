@@ -11,6 +11,9 @@ class GarbageTruck : public cSimpleModule
     simtime_t timeout;
     cMessage *timeoutEvent = nullptr;  // holds pointer to the timeout self-message
     cMessage *message = nullptr;  // message that has to be re-sent on timeout
+    cMessage *delayMessage = nullptr;
+    cMessage *secondDelayMessage = nullptr;
+
     std::string currentOut;
     const char* config;
     char buf[150];
@@ -62,16 +65,16 @@ void GarbageTruck::initialize()
     //CHECKPOINT 1 > All of the above works
     timeout = 1.0;
     timeoutEvent = new cMessage("timeoutEvent");
-
-    //This part is the same for all the configs - all start with sending "Is the can full?" to can 1.
     EV << "Sending msg to can 1\n";
-    message = new cMessage("1-Is the can full?");
-    currentOut = "canOut";
-    sendCopyOf(message, currentOut);
-    sentHostFast++;
 
-    scheduleAt(simTime()+timeout, timeoutEvent);
+    //message = new cMessage("1-Is the can full?");
+    //currentOut = "canOut";
+    //sendCopyOf(message, currentOut);
+    //sentHostFast++;
+    //scheduleAt(simTime()+timeout, timeoutEvent);
 
+    delayMessage = new cMessage("initialMessageDelay");
+    scheduleAt(simTime()+timeout + 11.0, delayMessage);
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
 }
 
@@ -85,6 +88,27 @@ void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
 void GarbageTruck::handleMessage(cMessage *msg)
 {
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
+    if(msg == delayMessage){
+        // Send the initial message after the delay
+                EV << "Sending initial message to can 1 after delay\n";
+                message = new cMessage("1-Is the can full?");
+                currentOut = "canOut";
+                sendCopyOf(message, currentOut);
+                sentHostFast++;
+
+                // Schedule the next timeout if needed
+                scheduleAt(simTime() + timeout, timeoutEvent);
+
+                delete msg;  // Clean up the initialMessage after use
+    }else if(msg == secondDelayMessage){
+
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        sentHostFast++;
+        scheduleAt(simTime() + timeout, timeoutEvent);
+    }
+    else
     //On timeouts we always behave in the same manner
     if (msg == timeoutEvent)
     {
@@ -128,12 +152,13 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
 
        if (strcmp("3 – YES", msg->getName()) == 0)
        {
-           message = new cMessage("4-Is the can full?");
-           currentOut = "can2Out";
-           sendCopyOf(message, currentOut);
+           //message = new cMessage("4-Is the can full?");
+           //currentOut = "can2Out";
+           //sendCopyOf(message, currentOut);
            rcvdHostFast++;
-           sentHostFast++;
-           scheduleAt(simTime()+timeout, timeoutEvent);
+           //sentHostFast++;
+           secondDelayMessage = new cMessage("SecondDelay");
+           scheduleAt(simTime()+timeout + 7, secondDelayMessage);
        }
 
        else if (strcmp("6 - YES", msg->getName()) == 0)
@@ -211,7 +236,5 @@ void GarbageTruck::updateMessageStats(int sentHostFast, int rcvdHostFast, int se
     sprintf(buf, "sentHostFast: %d  rcvdHostFast: %d sentHostSlow: %d rcvdHostSlow: %d", sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
     parent->getDisplayString().setTagArg("t", 0, buf);
 }
-
-
 
 

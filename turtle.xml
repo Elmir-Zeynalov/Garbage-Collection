@@ -8,7 +8,7 @@
         <!-- MOVE TO THE LEFT -->
         <moveto x="250" y="277"/>
         
-        <wait t="1"/>
+        <wait t="4"/>
         
         <!-- MOVE Down -->
         <moveto x="250" y="700"/>
@@ -17,7 +17,7 @@
         <!-- MOVE RIGHT -->
         <moveto x="350" y="700"/>
         
-  		<wait t="3"/>
+  		<wait t="6"/>
   		
   		<!-- MOVE RIGHT -->
         <moveto x="1000" y="700"/>
