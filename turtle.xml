@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<movements>
+    <movement id="1">
+        <!-- INITIAL POSITION + SPEED -->
+        <set speed="80" x="800" y="140"/> 
+        <wait t="2"/>
+        
+        <!-- MOVE TO THE LEFT -->
+        <moveto x="170" y="140"/>
+        
+        <wait t="5"/>
+        
+        <!-- MOVE Down -->
+        <moveto x="170" y="400"/>
+        <moveto x="170" y="420"/>
+        
+  		<wait t="3"/>
+  		
+  		<!-- MOVE RIGHT -->
+        <moveto x="200" y="420"/>
+		<moveto x="800" y="420"/>
+
+    </movement>
+
+</movements>
