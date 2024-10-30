@@ -11,6 +11,7 @@ class GarbageTruck : public cSimpleModule
     simtime_t timeout;
     cMessage *timeoutEvent = nullptr;  // holds pointer to the timeout self-message
     cMessage *message = nullptr;  // message that has to be re-sent on timeout
+    cMessage *delay = nullptr;
     std::string currentOut;
     const char* config;
     char buf[150];
@@ -27,6 +28,7 @@ class GarbageTruck : public cSimpleModule
     virtual void handleCloudBasedSolution(cMessage *msg);
     virtual void handleNoGarbageSolution(cMessage *msg);
     virtual void updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow);
+    virtual void sendDelayedMessage();
 };
 
 Define_Module(GarbageTruck);
@@ -58,22 +60,16 @@ void GarbageTruck::initialize()
     total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
     EV << "Title updated to: " << configTitle << endl;
 
-
-    //CHECKPOINT 1 > All of the above works
     timeout = 1.0;
     timeoutEvent = new cMessage("timeoutEvent");
-
-    //This part is the same for all the configs - all start with sending "Is the can full?" to can 1.
     EV << "Sending msg to can 1\n";
-    message = new cMessage("1-Is the can full?");
-    currentOut = "canOut";
-    sendCopyOf(message, currentOut);
-    sentHostFast++;
 
-    scheduleAt(simTime()+timeout, timeoutEvent);
-
+    delay = new cMessage("firstDelayMessage");
+    delay->setKind(1);
+    scheduleAt(simTime()+timeout + 11.0, delay);
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
 }
+
 
 void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
 {
@@ -85,8 +81,32 @@ void GarbageTruck::sendCopyOf(cMessage *msg, std::string out)
 void GarbageTruck::handleMessage(cMessage *msg)
 {
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
-    //On timeouts we always behave in the same manner
-    if (msg == timeoutEvent)
+
+    if(msg == delay){
+        switch(msg-> getKind()){
+        case 1:
+            //First delay
+            message = new cMessage("1-Is the can full?");
+            currentOut = "canOut";
+            sendCopyOf(message, currentOut);
+            sentHostFast++;
+            scheduleAt(simTime() + timeout, timeoutEvent);
+
+            delete msg;  // Clean up the initialMessage after use
+            break;
+
+        case 2:
+            //Second delay
+
+            sendDelayedMessage();
+
+            break;
+
+        default:
+            EV << "Unhandled delay kind\n";
+        }
+    }
+    else if (msg == timeoutEvent)
     {
         // If we receive the timeout event, that means the packet hasn't
         // arrived in time and we have to re-send it.
@@ -97,6 +117,7 @@ void GarbageTruck::handleMessage(cMessage *msg)
     }
     else
     {
+
         //Behaviour changes depending on the config
         if(strcmp(config, "Fog-based solution with fast messages") == 0){
             handleFogBasedSolution(msg);
@@ -111,16 +132,13 @@ void GarbageTruck::handleMessage(cMessage *msg)
             //We shouldnt be here. This is an erroneous state
             EV << "Unknown configuration, no specific handling\n";
         }
-
     }
 
     // refresh statistics
     updateMessageStats(sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
-
 }
 
 void GarbageTruck::handleFogBasedSolution(cMessage *msg){
-    // message arrived
        // Acknowledgment received!
        EV << "Received: " << msg->getName() << "\n";
        EV << "Timer cancelled.\n";
@@ -128,20 +146,16 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
 
        if (strcmp("3 – YES", msg->getName()) == 0)
        {
-           message = new cMessage("4-Is the can full?");
-           currentOut = "can2Out";
-           sendCopyOf(message, currentOut);
+           EV << "WE GOT 3 - YES" << msg->getName() << "\n";
+           delay = new cMessage("SecondDelay");
+           delay->setKind(2);
+           scheduleAt(simTime() + timeout + 7, delay);
            rcvdHostFast++;
-           sentHostFast++;
-           scheduleAt(simTime()+timeout, timeoutEvent);
        }
-
        else if (strcmp("6 - YES", msg->getName()) == 0)
        {
-           EV << "WE GOT 6????: " << msg->getName() << "\n";
-           // can 2 is full, needs to be cleaned
+           EV << "WE GOT 6 YES" << msg->getName() << "\n";
            rcvdHostFast++;
-
        }else {
            EV << "FOG:TRUCK -> " << msg->getName() << "\n";
        }
@@ -170,10 +184,9 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
         sentHostSlow++;
     }else if (strcmp("8 - OK", msg->getName()) == 0)
     {
-        message = new cMessage("4-Is the can full?");
-        currentOut = "can2Out";
-        sendCopyOf(message, currentOut);
-        scheduleAt(simTime()+timeout, timeoutEvent);
+        delay = new cMessage("SecondDelay");
+        delay->setKind(2);
+        scheduleAt(simTime() + timeout + 7, delay);
         rcvdHostSlow++;
     }
     else if (strcmp("10 - OK", msg->getName()) == 0)
@@ -192,10 +205,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
     if (strcmp("2 – NO", msg->getName()) == 0)
     {
         rcvdHostFast++;
-        message = new cMessage("4-Is the can full?");
-        currentOut = "can2Out";
-        sendCopyOf(message, currentOut);
-        scheduleAt(simTime()+timeout, timeoutEvent);
+        delay = new cMessage("SecondDelay");
+        delay->setKind(2);
+        scheduleAt(simTime() + timeout + 7, delay);
     }
     else if (strcmp("5 – NO", msg->getName()) == 0)
     {
@@ -207,11 +219,31 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
 void GarbageTruck::updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow){
     cModule *parent = getParentModule();
-
     sprintf(buf, "sentHostFast: %d  rcvdHostFast: %d sentHostSlow: %d rcvdHostSlow: %d", sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
     parent->getDisplayString().setTagArg("t", 0, buf);
 }
 
-
+void GarbageTruck::sendDelayedMessage(){
+    if(strcmp(config, "Fog-based solution with fast messages") == 0){
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime() + timeout, timeoutEvent);
+        sentHostFast++;
+    }
+    else if(strcmp(config, "Cloud-based solution with slow messages") == 0){
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+        sentHostFast++;
+    } else {
+        message = new cMessage("4-Is the can full?");
+        currentOut = "can2Out";
+        sendCopyOf(message, currentOut);
+        scheduleAt(simTime()+timeout, timeoutEvent);
+        sentHostFast++;
+    }
+}
 
 
