@@ -46,13 +46,13 @@ network GarbageCollectionSystem
     parameters:
         string configTitle;
 
-        @figure[upper_street1](type=rectangle; pos=100,100; size=600,3; fillColor=black; fillOpacity=1);
-        @figure[upper_street2](type=rectangle; pos=200,200; size=500,3; fillColor=black; fillOpacity=1);
-        @figure[lower_street1](type=rectangle; pos=200,350; size=500,3; fillColor=black; fillOpacity=1);
-        @figure[lower_street2](type=rectangle; pos=100,450; size=600,3; fillColor=black; fillOpacity=1);
+        @figure[upper_street1](type=rectangle; pos=160,200; size=800,3; fillColor=black; fillOpacity=1);
+        @figure[upper_street2](type=rectangle; pos=340,350; size=600,3; fillColor=black; fillOpacity=1);
+        @figure[lower_street1](type=rectangle; pos=340,590; size=600,3; fillColor=black; fillOpacity=1);
+        @figure[lower_street2](type=rectangle; pos=160,750; size=800,3; fillColor=black; fillOpacity=1);
 
-        @figure[vertical_street1](type=rectangle; pos=100,100; size=3,350; fillColor=black; fillOpacity=1);
-        @figure[vertical_street2](type=rectangle; pos=200,200; size=3,150; fillColor=black; fillOpacity=1);
+        @figure[vertical_street1](type=rectangle; pos=160,200; size=3,550; fillColor=black; fillOpacity=1);
+        @figure[vertical_street2](type=rectangle; pos=340,350; size=3,240; fillColor=black; fillOpacity=1);
 
         @figure[Title](type=text; pos=1500,5; text="Initial Title");
 
@@ -74,20 +74,20 @@ network GarbageCollectionSystem
         @figure[fast_from_cloud_to_others](type=text; pos=1500,330; text="Fast connection from the Cloud to others (time it takes) =");
         @figure[fast_from_others_to_cloud](type=text; pos=1500,350; text="Fast connection from others to the Cloud (time it takes) =");
 
-        @display("bgb=2000,600");
+        @display("bgb=2200,870");
 
     submodules:
         can: TrashCan {
-            @display("p=210,70;i=block/bucket;r=100");
+            @display("p=250,120;i=block/bucket;r=100");
         }
         anotherCan: TrashCan {
-            @display("p=270,320;i=block/bucket;r=100");
+            @display("p=450,510;i=block/bucket;r=100");
         }
         host: GarbageTruck {
-            @display("p=610,135;i=block/wheelbarrow;r=70");
+            @display("p=900,277;i=block/wheelbarrow;r=70");
         }
         cloudNode: CloudNode {
-            @display("p=837,275;i=block/table;r=650");
+            @display("p=1080,440;i=block/table;r=650");
         }
     connections:
         can.truckOut --> {  delay = 100ms; } --> host.canIn;
