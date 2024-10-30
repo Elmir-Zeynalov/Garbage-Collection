@@ -1,4 +1,47 @@
 
+import inet.mobility.contract.IMobility;
+import inet.mobility.single.TurtleMobility;
+import inet.visualizer.contract.IIntegratedVisualizer;
+
+
+import inet.mobility.contract.IMobility;
+import inet.mobility.single.TurtleMobility;
+
+module MobileHost
+{
+    parameters:
+        string configTitle;
+    
+    gates:
+        input cloudIn;
+        input canIn;
+        input can2In;
+        output cloudOut;
+        output canOut;
+        output can2Out;
+    
+    submodules:
+        mobility: TurtleMobility {
+            @display("p=100,100;is=s");
+        }
+        host: GarbageTruck {
+            parameters:
+                configTitle = parent.configTitle;
+            @display("p=200,200");
+        }
+        
+    connections allowunconnected:
+        cloudIn --> host.cloudIn;
+        canIn --> host.canIn;
+        can2In --> host.can2In;
+        
+        host.cloudOut --> cloudOut;
+        host.canOut --> canOut;
+        host.can2Out --> can2Out;
+}
+
+
+
 simple GarbageTruck
 {
     parameters:
@@ -83,11 +126,16 @@ network GarbageCollectionSystem
         anotherCan: TrashCan {
             @display("p=450,510;i=block/bucket;r=100");
         }
-        host: GarbageTruck {
-            @display("p=900,277;i=block/wheelbarrow;r=70");
+        host: MobileHost {
+            parameters:
+                configTitle = parent.configTitle;
+            @display("p=910,900;i=block/wheelbarrow;r=70");
         }
         cloudNode: CloudNode {
             @display("p=1080,440;i=block/table;r=650");
+        }
+         visualizer: <default(firstAvailableOrEmpty("IntegratedCanvasVisualizer"))> like IIntegratedVisualizer if typename != "" {
+            @display("p=1100,30");
         }
     connections:
         can.truckOut --> {  delay = 100ms; } --> host.canIn;

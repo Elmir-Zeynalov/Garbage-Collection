@@ -39,22 +39,27 @@ GarbageTruck::~GarbageTruck()
 
 void GarbageTruck::initialize()
 {
+    char temp[100];
     updateMessageStats(0, 0, 0, 0);
 
     // Retrieve the configTitle parameter from the ini file
     // UPDATING TITLE
     const char* configTitle = par("configTitle").stringValue();
     config = configTitle;
+
     EV << "Setting configTitle to: " << configTitle << endl;
-    cCanvas* canvas = this->getParentModule()->getCanvas();
-    char temp[100];
-    cLabelFigure *total_num_cloud= (cLabelFigure*)(canvas->getFigure("Title"));
+    cModule *network = getSystemModule(); // This directly accesses the root network module
+    cCanvas* canvass = network->getCanvas();
+    cFigure *figure = canvass->getFigure("Title");
+    cLabelFigure *total_num_cloud= (cLabelFigure*)figure;
+
     sprintf(temp, "%s", configTitle);
     total_num_cloud->setText(temp);
     total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
     EV << "Title updated to: " << configTitle << endl;
-    //
 
+
+    //CHECKPOINT 1 > All of the above works
     timeout = 1.0;
     timeoutEvent = new cMessage("timeoutEvent");
 
@@ -201,8 +206,10 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
 
 void GarbageTruck::updateMessageStats(int sentHostFast, int rcvdHostFast, int sentHostSlow, int rcvdHostSlow){
+    cModule *parent = getParentModule();
+
     sprintf(buf, "sentHostFast: %d  rcvdHostFast: %d sentHostSlow: %d rcvdHostSlow: %d", sentHostFast, rcvdHostFast, sentHostSlow, rcvdHostSlow);
-    getDisplayString().setTagArg("t", 0, buf);
+    parent->getDisplayString().setTagArg("t", 0, buf);
 }
 
 
