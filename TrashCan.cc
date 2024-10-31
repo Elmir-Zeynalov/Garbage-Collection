@@ -102,7 +102,10 @@ void TrashCan::handleMessage(cMessage *msg)
 }
 
 void TrashCan::updateMessageStats(int sentCanFast, int rcvdCanFast, int numberOfLostCanMsgs){
-    sprintf(buf, "sentCanFast: %d  rcvdCanFast: %d numberOfLostCanMsgs: %d ", sentCanFast, rcvdCanFast, numberOfLostCanMsgs);
+    const int canId = par("canId").intValue();
+
+    sprintf(buf, "%s: %d  %s: %d numberOfLostCanMsgs: %d ", (canId == 1 ? "sentCanFast" : "sentAnotherCanFast"), sentCanFast,
+            (canId == 1 ? "rcvdCanFast" : "rcvdAnotherCanFast"), rcvdCanFast, numberOfLostCanMsgs);
     getDisplayString().setTagArg("t", 0, buf);
 }
 
