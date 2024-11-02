@@ -2,6 +2,7 @@
 #include <cstring>
 #include <omnetpp.h>
 #include <stdio.h>
+#include "NetworkCanvasUtils.h"
 
 using namespace omnetpp;
 
@@ -38,6 +39,9 @@ void CloudNode::initialize()
     if(strcmp(config, "No garbage solution") != 0) {
         updateMessageStats(sentCloudFast, rcvdCloudFast, sentCloudSlow, rcvdCloudSlow);
     }
+
+
+    NetworkCanvasUtils::addTextFiguresToCanvas();
 }
 
 void CloudNode::handleMessage(cMessage *msg)

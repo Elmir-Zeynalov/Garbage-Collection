@@ -57,7 +57,7 @@ void GarbageTruck::initialize()
 
     sprintf(temp, "%s", configTitle);
     total_num_cloud->setText(temp);
-    total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
+    total_num_cloud->setFont(cFigure::Font("Arial", 20, cFigure::FONT_BOLD));
     EV << "Title updated to: " << configTitle << endl;
 
     timeout = 1.0;
@@ -149,7 +149,7 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
            EV << "WE GOT 3 - YES" << msg->getName() << "\n";
            delay = new cMessage("SecondDelay");
            delay->setKind(2);
-           scheduleAt(simTime() + timeout + 7, delay);
+           scheduleAt(simTime() + timeout + 8, delay);
            rcvdHostFast++;
        }
        else if (strcmp("6 - YES", msg->getName()) == 0)
@@ -186,7 +186,7 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
     {
         delay = new cMessage("SecondDelay");
         delay->setKind(2);
-        scheduleAt(simTime() + timeout + 7, delay);
+        scheduleAt(simTime() + timeout + 9, delay);
         rcvdHostSlow++;
     }
     else if (strcmp("10 - OK", msg->getName()) == 0)
