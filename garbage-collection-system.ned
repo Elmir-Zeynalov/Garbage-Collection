@@ -128,12 +128,14 @@ network GarbageCollectionSystem
         host: MobileHost {
             parameters:
                 configTitle = parent.configTitle;
-                @display("p=910,900;i=block/wheelbarrow;r=90"); 
+                @display("p=910,900;i=block/wheelbarrow;r=90");
         }
         cloud: CloudNode {
             @display("p=1080,440;i=block/table;r=700");
         }
-        visualizer:IntegratedVisualizer {@display("p=1100,30");}
+        visualizer: IntegratedVisualizer {
+            @display("p=1100,30");
+        }
     connections:
         can.truckOut --> {  delay = 100ms; } --> host.canIn;
         can.cloudOut --> {  delay = 100ms; } --> cloud.canIn;
