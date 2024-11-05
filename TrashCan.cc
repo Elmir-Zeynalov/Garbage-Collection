@@ -2,6 +2,7 @@
 #include <cstring>
 #include <omnetpp.h>
 #include <stdio.h>
+#include "NetworkCanvasUtils.h"
 
 using namespace omnetpp;
 
@@ -42,10 +43,13 @@ void TrashCan::handleMessage(cMessage *msg)
     updateMessageStats(sentCanFast, rcvdCanFast, numberOfLostCanMsgs);
     if (strcmp("1-Is the can full?", msg->getName()) == 0)
     {
+        // fast connection from host/smartphone to others
+        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::quickDelay);
+
         numLostMsgs++;
         if (numLostMsgs > 3) {
             // it is time to acknowledge the truck
-             rcvdCanFast++;
+            rcvdCanFast++;
             if(strcmp(config, "No garbage solution") == 0){
                 send(new cMessage("2 – NO"), "truckOut");
             }else{
@@ -58,8 +62,10 @@ void TrashCan::handleMessage(cMessage *msg)
                     send(new cMessage("7 – Collect can garbage"), "cloudOut");
                 }
             }
-            sentCanFast++;
+            // others to can
+            NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::quickDelay);
 
+            sentCanFast++;
         } else {
             EV << "\"Losing\" message.\n";
             numberOfLostCanMsgs++;
@@ -68,6 +74,9 @@ void TrashCan::handleMessage(cMessage *msg)
     }
     else if (strcmp("4-Is the can full?", msg->getName()) == 0)
     {
+        // fast connection from host/smartphone to others
+        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::quickDelay);
+
         numLostMsgs++;
         if (numLostMsgs > 3) {
             // it is time to acknowledge the truck
@@ -83,6 +92,8 @@ void TrashCan::handleMessage(cMessage *msg)
                     send(new cMessage("9 – Collect can garbage"), "cloudOut");
                 }
             }
+            // others to anotherCan
+            NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::quickDelay);
             sentCanFast++;
 
         } else {
@@ -93,7 +104,13 @@ void TrashCan::handleMessage(cMessage *msg)
     }
     else if(strcmp("8 - OK", msg->getName()) == 0){
         rcvdCanFast++;
+        // others to can
+        NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::quickDelay);
+        // slow from cloud to others
+        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::quickDelay);
     }else if(strcmp("10 - OK", msg->getName()) == 0){
+        NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::quickDelay);
         rcvdCanFast++;
     }
 

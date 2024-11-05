@@ -7,7 +7,7 @@ module MobileHost
 {
     parameters:
         string configTitle;
-
+        @display("t=host-car");
     gates:
         input cloudIn;
         input canIn;
@@ -41,6 +41,7 @@ simple GarbageTruck
     parameters:
         @display("i=device/pc");
         string configTitle; //NEEDED TO UPDATE TITLE. A LITTLE HACKY ATM BUT WORKS FOR NOW
+        @display("t=host-ca");
     gates:
         input cloudIn;
         input canIn;
@@ -83,36 +84,18 @@ network GarbageCollectionSystem
 {
     parameters:
         string configTitle;
-
-        @figure[upper_street1](type=rectangle; pos=160,200; size=800,3; fillColor=black; fillOpacity=1);
-        @figure[upper_street2](type=rectangle; pos=340,350; size=600,3; fillColor=black; fillOpacity=1);
-        @figure[lower_street1](type=rectangle; pos=340,590; size=600,3; fillColor=black; fillOpacity=1);
-        @figure[lower_street2](type=rectangle; pos=160,750; size=800,3; fillColor=black; fillOpacity=1);
+        int numHosts = 1;
+        @figure[upper_street1](type=rectangle; pos=160,200; size=880,3; fillColor=black; fillOpacity=1);
+        @figure[upper_street2](type=rectangle; pos=340,350; size=700,3; fillColor=black; fillOpacity=1);
+        @figure[lower_street1](type=rectangle; pos=340,590; size=700,3; fillColor=black; fillOpacity=1);
+        @figure[lower_street2](type=rectangle; pos=160,750; size=880,3; fillColor=black; fillOpacity=1);
 
         @figure[vertical_street1](type=rectangle; pos=160,200; size=3,550; fillColor=black; fillOpacity=1);
         @figure[vertical_street2](type=rectangle; pos=340,350; size=3,240; fillColor=black; fillOpacity=1);
 
-        @figure[Title](type=text; pos=1500,5; text="Initial Title");
+        @figure[Title](type=text; pos=1500,15; text="Initial Title");
 
-
-        //Calculations and statistics part
-        @figure[slow_from_smartphone_to_others](type=text; pos=1500,70; text="Slow connection from the smartphone to others (time it takes) =");
-        @figure[slow_others_to_smartphone](type=text; pos=1500,90; text="Slow connection from tohers to the smartphone (time it takes) =");
-        @figure[fast_from_smartphone_to_others](type=text; pos=1500,110; text="Fast connection from the smartphone to others (time it takes) =");
-        @figure[fast_others_to_smartphone](type=text; pos=1500,130; text="Fast connection from tohers to the smartphone (time it takes) =");
-
-        @figure[from_can_to_others](type=text; pos=1500,170; text="Connection from the can to others (time it takes) =");
-        @figure[from_others_to_can](type=text; pos=1500,190; text="Connection from others to the can (time it takes) =");
-
-        @figure[from_anotherCan_to_others](type=text; pos=1500,230; text="Connection from the anotherCan to others (time it takes) =");
-        @figure[from_others_to_anotherCan](type=text; pos=1500,250; text="Connection from others to the anotherCan (time it takes) =");
-
-        @figure[slow_from_cloud_to_others](type=text; pos=1500,290; text="Slow connection from the Cloud to others (time it takes) =");
-        @figure[slow_from_others_to_cloud](type=text; pos=1500,310; text="Slow connection from others to the Cloud (time it takes) =");
-        @figure[fast_from_cloud_to_others](type=text; pos=1500,330; text="Fast connection from the Cloud to others (time it takes) =");
-        @figure[fast_from_others_to_cloud](type=text; pos=1500,350; text="Fast connection from others to the Cloud (time it takes) =");
-
-        @display("bgb=2200,870");
+        @display("bgb=2500,870");
 
     submodules:
         can: TrashCan {
@@ -125,27 +108,30 @@ network GarbageCollectionSystem
                 canId = 2;
                 @display("p=450,510;i=block/bucket;r=200");
         }
-        host: MobileHost {
+        host[numHosts]: MobileHost {
             parameters:
                 configTitle = parent.configTitle;
-                @display("p=910,900;i=block/wheelbarrow;r=90"); 
+                @display("p=910,900;i=block/wheelbarrow;r=90;t=-");
+                @display("t=host-car");
         }
         cloud: CloudNode {
-            @display("p=1080,440;i=block/table;r=700");
+            @display("p=1200,460;i=block/encap;r=850");
         }
-        visualizer:IntegratedVisualizer {@display("p=1100,30");}
+        visualizer: IntegratedVisualizer {
+            @display("p=1100,30");
+        }
     connections:
-        can.truckOut --> {  delay = 100ms; } --> host.canIn;
-        can.cloudOut --> {  delay = 100ms; } --> cloud.canIn;
-        can.truckIn <-- {  delay = 100ms; } <-- host.canOut;
-        can.cloudIn <-- {  delay = 100ms; } <-- cloud.canOut;
+        can.truckOut --> {  delay = 50ms; } --> host[0].canIn;
+        can.cloudOut --> {  delay = 50ms; } --> cloud.canIn;
+        can.truckIn <-- {  delay = 50ms; } <-- host[0].canOut;
+        can.cloudIn <-- {  delay = 50ms; } <-- cloud.canOut;
 
-        anotherCan.truckOut --> {  delay = 100ms; } --> host.can2In;
-        anotherCan.cloudOut --> {  delay = 100ms; } --> cloud.can2In;
-        anotherCan.truckIn <-- {  delay = 100ms; } <-- host.can2Out;
-        anotherCan.cloudIn <-- {  delay = 100ms; } <-- cloud.can2Out;
+        anotherCan.truckOut --> {  delay = 50ms; } --> host[0].can2In;
+        anotherCan.cloudOut --> {  delay = 50ms; } --> cloud.can2In;
+        anotherCan.truckIn <-- {  delay = 50ms; } <-- host[0].can2Out;
+        anotherCan.cloudIn <-- {  delay = 50ms; } <-- cloud.can2Out;
 
-        host.cloudOut --> {  delay = 100ms; } --> cloud.truckIn;
-        host.cloudIn <-- {  delay = 100ms; } <-- cloud.truckOut;
+        host[0].cloudOut --> {  delay = 400ms; } --> cloud.truckIn;
+        host[0].cloudIn <-- {  delay = 400ms; } <-- cloud.truckOut;
 }
 

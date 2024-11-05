@@ -2,13 +2,13 @@
 <movements>
     <movement id="1">
         <!-- INITIAL POSITION + SPEED -->
-        <set speed="80" x="1100" y="277"/> 
+        <set speed="80" x="1000" y="277"/> 
         <wait t="1"/>
         
         <!-- MOVE TO THE LEFT -->
         <moveto x="250" y="277"/>
         
-        <wait t="4"/>
+        <wait t="6"/>
         
         <!-- MOVE Down -->
         <moveto x="250" y="700"/>
@@ -17,7 +17,7 @@
         <!-- MOVE RIGHT -->
         <moveto x="350" y="700"/>
         
-  		<wait t="6"/>
+  		<wait t="7"/>
   		
   		<!-- MOVE RIGHT -->
         <moveto x="1000" y="700"/>

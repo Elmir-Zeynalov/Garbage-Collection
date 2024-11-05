@@ -2,6 +2,7 @@
 #include <cstring>
 #include <omnetpp.h>
 #include <stdio.h>
+#include "NetworkCanvasUtils.h"
 
 using namespace omnetpp;
 
@@ -38,6 +39,9 @@ void CloudNode::initialize()
     if(strcmp(config, "No garbage solution") != 0) {
         updateMessageStats(sentCloudFast, rcvdCloudFast, sentCloudSlow, rcvdCloudSlow);
     }
+
+
+    NetworkCanvasUtils::addTextFiguresToCanvas();
 }
 
 void CloudNode::handleMessage(cMessage *msg)
@@ -71,11 +75,19 @@ void CloudNode::handleFogBasedSolution(cMessage *msg){
     rcvdCloudFast++;
     if (strcmp("7 – Collect can garbage", msg->getName()) == 0)
     {
+        // from can to others
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
+        // slow from others to cloud
+        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::quickDelay);
         acknowledge(new cMessage("8 - OK"), "canOut");
         sentCloudFast++;
     }
     else if (strcmp("9 – Collect can garbage", msg->getName()) == 0)
     {
+        // from anotherCan to others
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
+        // slow from others to cloud
+        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::quickDelay);
         acknowledge(new cMessage("10 - OK"), "can2Out");
         sentCloudFast++;
     }
@@ -87,11 +99,15 @@ void CloudNode::handleCloudBasedSolution(cMessage *msg){
     {
         acknowledge(new cMessage("8 - OK"), "truckOut");
         sentCloudSlow++;
+        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::slowDelay);
     }
     else if (strcmp("9-Collect garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("10 - OK"), "truckOut");
         sentCloudSlow++;
+        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::slowDelay);
     }
 }
 

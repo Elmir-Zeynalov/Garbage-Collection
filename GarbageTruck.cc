@@ -2,6 +2,7 @@
 #include <cstring>
 #include <omnetpp.h>
 #include <stdio.h>
+#include "NetworkCanvasUtils.h"
 
 using namespace omnetpp;
 
@@ -57,7 +58,7 @@ void GarbageTruck::initialize()
 
     sprintf(temp, "%s", configTitle);
     total_num_cloud->setText(temp);
-    total_num_cloud->setFont(cFigure::Font("Arial", 12, cFigure::FONT_BOLD));
+    total_num_cloud->setFont(cFigure::Font("Arial", 20, cFigure::FONT_BOLD));
     EV << "Title updated to: " << configTitle << endl;
 
     timeout = 1.0;
@@ -146,16 +147,24 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
 
        if (strcmp("3 – YES", msg->getName()) == 0)
        {
+           // others to smartphone/truck
+           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+           // can to others
+           NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
            EV << "WE GOT 3 - YES" << msg->getName() << "\n";
            delay = new cMessage("SecondDelay");
            delay->setKind(2);
-           scheduleAt(simTime() + timeout + 7, delay);
+           scheduleAt(simTime() + timeout + 8, delay);
            rcvdHostFast++;
        }
        else if (strcmp("6 - YES", msg->getName()) == 0)
        {
            EV << "WE GOT 6 YES" << msg->getName() << "\n";
            rcvdHostFast++;
+           // fast from others to smartphone
+           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+           // anotherCan to others
+           NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
        }else {
            EV << "FOG:TRUCK -> " << msg->getName() << "\n";
        }
@@ -170,6 +179,10 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
 
     if (strcmp("3 – YES", msg->getName()) == 0)
     {
+        // others to smartphone/truck
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        // can to others
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
         rcvdHostFast++;
         // can 1 is full, needs to be cleaned
         sendCopyOf(new cMessage("7-Collect garbage"), "cloudOut");
@@ -177,6 +190,10 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
     }
     else if (strcmp("6 - YES", msg->getName()) == 0)
     {
+        // fast others to smartphone
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        // anotherCan to others
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
         rcvdHostFast++;
         EV << "WE GOT 6????: " << msg->getName() << "\n";
         // can 2 is full, needs to be cleaned
@@ -186,12 +203,16 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
     {
         delay = new cMessage("SecondDelay");
         delay->setKind(2);
-        scheduleAt(simTime() + timeout + 7, delay);
+        scheduleAt(simTime() + timeout + 9, delay);
         rcvdHostSlow++;
+        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::slowDelay);
     }
     else if (strcmp("10 - OK", msg->getName()) == 0)
     {
         rcvdHostSlow++;
+        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::slowDelay);
     }
 }
 
@@ -204,6 +225,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
     if (strcmp("2 – NO", msg->getName()) == 0)
     {
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        // from can to others
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
         rcvdHostFast++;
         delay = new cMessage("SecondDelay");
         delay->setKind(2);
@@ -211,6 +235,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
     }
     else if (strcmp("5 – NO", msg->getName()) == 0)
     {
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        // from anotherCan to others
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
         rcvdHostFast++;
         EV << "No garbage to collect:  " << msg->getName() << "\n";
     }
