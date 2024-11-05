@@ -17,7 +17,7 @@
         <!-- MOVE RIGHT -->
         <moveto x="350" y="700"/>
         
-  		<wait t="6"/>
+  		<wait t="7"/>
   		
   		<!-- MOVE RIGHT -->
         <moveto x="1000" y="700"/>

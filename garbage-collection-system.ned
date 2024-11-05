@@ -121,17 +121,17 @@ network GarbageCollectionSystem
             @display("p=1100,30");
         }
     connections:
-        can.truckOut --> {  delay = 100ms; } --> host[0].canIn;
-        can.cloudOut --> {  delay = 100ms; } --> cloud.canIn;
-        can.truckIn <-- {  delay = 100ms; } <-- host[0].canOut;
-        can.cloudIn <-- {  delay = 100ms; } <-- cloud.canOut;
+        can.truckOut --> {  delay = 50ms; } --> host[0].canIn;
+        can.cloudOut --> {  delay = 50ms; } --> cloud.canIn;
+        can.truckIn <-- {  delay = 50ms; } <-- host[0].canOut;
+        can.cloudIn <-- {  delay = 50ms; } <-- cloud.canOut;
 
-        anotherCan.truckOut --> {  delay = 100ms; } --> host[0].can2In;
-        anotherCan.cloudOut --> {  delay = 100ms; } --> cloud.can2In;
-        anotherCan.truckIn <-- {  delay = 100ms; } <-- host[0].can2Out;
-        anotherCan.cloudIn <-- {  delay = 100ms; } <-- cloud.can2Out;
+        anotherCan.truckOut --> {  delay = 50ms; } --> host[0].can2In;
+        anotherCan.cloudOut --> {  delay = 50ms; } --> cloud.can2In;
+        anotherCan.truckIn <-- {  delay = 50ms; } <-- host[0].can2Out;
+        anotherCan.cloudIn <-- {  delay = 50ms; } <-- cloud.can2Out;
 
-        host[0].cloudOut --> {  delay = 100ms; } --> cloud.truckIn;
-        host[0].cloudIn <-- {  delay = 100ms; } <-- cloud.truckOut;
+        host[0].cloudOut --> {  delay = 400ms; } --> cloud.truckIn;
+        host[0].cloudIn <-- {  delay = 400ms; } <-- cloud.truckOut;
 }
 
