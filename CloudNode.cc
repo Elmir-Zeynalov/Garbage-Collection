@@ -76,18 +76,18 @@ void CloudNode::handleFogBasedSolution(cMessage *msg){
     if (strcmp("7 – Collect can garbage", msg->getName()) == 0)
     {
         // from can to others
-        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::lan);
         // slow from others to cloud
-        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::lan);
         acknowledge(new cMessage("8 - OK"), "canOut");
         sentCloudFast++;
     }
     else if (strcmp("9 – Collect can garbage", msg->getName()) == 0)
     {
         // from anotherCan to others
-        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::lan);
         // slow from others to cloud
-        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(11, NetworkCanvasUtils::lan);
         acknowledge(new cMessage("10 - OK"), "can2Out");
         sentCloudFast++;
     }
@@ -99,15 +99,15 @@ void CloudNode::handleCloudBasedSolution(cMessage *msg){
     {
         acknowledge(new cMessage("8 - OK"), "truckOut");
         sentCloudSlow++;
-        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::slowDelay);
-        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::g4);
+        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::g4);
     }
     else if (strcmp("9-Collect garbage", msg->getName()) == 0)
     {
         acknowledge(new cMessage("10 - OK"), "truckOut");
         sentCloudSlow++;
-        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::slowDelay);
-        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(0, NetworkCanvasUtils::g4);
+        NetworkCanvasUtils::updateTextFigure(9, NetworkCanvasUtils::g4);
     }
 }
 

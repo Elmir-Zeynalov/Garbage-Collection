@@ -148,9 +148,9 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
        if (strcmp("3 – YES", msg->getName()) == 0)
        {
            // others to smartphone/truck
-           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
            // can to others
-           NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
+           NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::wifi);
            EV << "WE GOT 3 - YES" << msg->getName() << "\n";
            delay = new cMessage("SecondDelay");
            delay->setKind(2);
@@ -162,9 +162,9 @@ void GarbageTruck::handleFogBasedSolution(cMessage *msg){
            EV << "WE GOT 6 YES" << msg->getName() << "\n";
            rcvdHostFast++;
            // fast from others to smartphone
-           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+           NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
            // anotherCan to others
-           NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
+           NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::wifi);
        }else {
            EV << "FOG:TRUCK -> " << msg->getName() << "\n";
        }
@@ -180,9 +180,9 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
     if (strcmp("3 – YES", msg->getName()) == 0)
     {
         // others to smartphone/truck
-        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
         // can to others
-        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::wifi);
         rcvdHostFast++;
         // can 1 is full, needs to be cleaned
         sendCopyOf(new cMessage("7-Collect garbage"), "cloudOut");
@@ -191,9 +191,9 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
     else if (strcmp("6 - YES", msg->getName()) == 0)
     {
         // fast others to smartphone
-        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
         // anotherCan to others
-        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::wifi);
         rcvdHostFast++;
         EV << "WE GOT 6????: " << msg->getName() << "\n";
         // can 2 is full, needs to be cleaned
@@ -205,14 +205,14 @@ void GarbageTruck::handleCloudBasedSolution(cMessage *msg){
         delay->setKind(2);
         scheduleAt(simTime() + timeout + 9, delay);
         rcvdHostSlow++;
-        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::slowDelay);
-        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::g4);
+        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::g4);
     }
     else if (strcmp("10 - OK", msg->getName()) == 0)
     {
         rcvdHostSlow++;
-        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::slowDelay);
-        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::slowDelay);
+        NetworkCanvasUtils::updateTextFigure(1, NetworkCanvasUtils::g4);
+        NetworkCanvasUtils::updateTextFigure(8, NetworkCanvasUtils::g4);
     }
 }
 
@@ -225,9 +225,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
 
     if (strcmp("2 – NO", msg->getName()) == 0)
     {
-        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
         // from can to others
-        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(4, NetworkCanvasUtils::wifi);
         rcvdHostFast++;
         delay = new cMessage("SecondDelay");
         delay->setKind(2);
@@ -235,9 +235,9 @@ void GarbageTruck::handleNoGarbageSolution(cMessage *msg){
     }
     else if (strcmp("5 – NO", msg->getName()) == 0)
     {
-        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(3, NetworkCanvasUtils::wifi);
         // from anotherCan to others
-        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(6, NetworkCanvasUtils::wifi);
         rcvdHostFast++;
         EV << "No garbage to collect:  " << msg->getName() << "\n";
     }

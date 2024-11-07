@@ -17,8 +17,9 @@ public:
             int posY;
         };
 
-    static const int slowDelay = 500;
-    static const int quickDelay = 50;
+    static const int g4 = 50; // smartphone and cloud in cloud solution
+    static const int wifi = 25; // smartphone and cans
+    static const int lan = 5; // cans and cloud in fog solution
 
     // Public access to figureDefinitions
     static std::vector<FigureInfo> delayMetrics;

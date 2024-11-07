@@ -44,7 +44,7 @@ void TrashCan::handleMessage(cMessage *msg)
     if (strcmp("1-Is the can full?", msg->getName()) == 0)
     {
         // fast connection from host/smartphone to others
-        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::wifi);
 
         numLostMsgs++;
         if (numLostMsgs > 3) {
@@ -63,7 +63,7 @@ void TrashCan::handleMessage(cMessage *msg)
                 }
             }
             // others to can
-            NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::quickDelay);
+            NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::wifi);
 
             sentCanFast++;
         } else {
@@ -75,7 +75,7 @@ void TrashCan::handleMessage(cMessage *msg)
     else if (strcmp("4-Is the can full?", msg->getName()) == 0)
     {
         // fast connection from host/smartphone to others
-        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(2, NetworkCanvasUtils::wifi);
 
         numLostMsgs++;
         if (numLostMsgs > 3) {
@@ -93,7 +93,7 @@ void TrashCan::handleMessage(cMessage *msg)
                 }
             }
             // others to anotherCan
-            NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::quickDelay);
+            NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::wifi);
             sentCanFast++;
 
         } else {
@@ -105,12 +105,12 @@ void TrashCan::handleMessage(cMessage *msg)
     else if(strcmp("8 - OK", msg->getName()) == 0){
         rcvdCanFast++;
         // others to can
-        NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(5, NetworkCanvasUtils::lan);
         // slow from cloud to others
-        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::lan);
     }else if(strcmp("10 - OK", msg->getName()) == 0){
-        NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::quickDelay);
-        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::quickDelay);
+        NetworkCanvasUtils::updateTextFigure(7, NetworkCanvasUtils::lan);
+        NetworkCanvasUtils::updateTextFigure(10, NetworkCanvasUtils::lan);
         rcvdCanFast++;
     }
 
