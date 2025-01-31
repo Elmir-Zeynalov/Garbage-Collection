@@ -1,6 +1,6 @@
 # Garbage Collection
 
-This repository contains work for a school project to examine and simulate different architectures for mobile IoT nodes. The purpose was to compare Fog computing and Cloud computing.
+This repository contains work for a school project to examine and simulate different architectures for mobile IoT nodes. The purpose was to compare Fog computing and Cloud computing. It was done in collaboration with Todor Dobrev.
 
 ## Description
 
